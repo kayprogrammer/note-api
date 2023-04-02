@@ -22,7 +22,7 @@ DEBUG = config("DEBUG")
 ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(" ")
 
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "apps.common.custom_methods.custom_exception_handler",
+    # "EXCEPTION_HANDLER": "apps.common.custom_methods.custom_exception_handler",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
@@ -312,17 +312,6 @@ JAZZMIN_SETTINGS = {
         "accounts.user": "fas fa-user",
         "accounts.Group": "fas fa-users",
         "sites.Site": "fas fa-globe",
-        # "profiles.language": "fas fa-language",
-        # "profiles.mentor": "fas fa-chalkboard-teacher",
-        # "profiles.mentee": "fas fa-user-alt",
-        # "profiles.specialty": "fas fa-list-alt",
-        # "profiles.availability": "fas fa-clock",
-        # "profiles.specialityfaqs": "fas fa-question-circle",
-        # "profiles.notification": "fas fa-bell",
-        # "profiles.message": "fas fa-comment-alt",
-        # "institute.topic": "fas fa-book",
-        # "institute.lesson": "fas fa-school",
-        # "institute.review": "fas fa-star",
     },
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas fa-chevron-circle-right",

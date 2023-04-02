@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OTP Code</title>
+  <style>
+    /* Add some styling to make the OTP code stand out */
+    .otp-code {
+      font-size: 36px;
+      font-weight: bold;
+      color: #00bfff;
+      text-align: center;
+    }
+    /* Add a media query for responsiveness */
+    @media only screen and (max-width: 600px) {
+      .otp-code {
+        font-size: 24px;
+      }
+    }
+    /* Add CSS to center the entire email */
+    .email-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <h1 style="text-align: center;">Hello {{name}}</h1>
+    <p style="text-align: center;">Please use the following code to verify your email:</p>
+    <p class="otp-code">{{otp}}</p>
+    <p style="text-align: center;">This code will expire in 15 minutes. Do not share this code with anyone.</p>
+  </div>
+</body>
+</html>
