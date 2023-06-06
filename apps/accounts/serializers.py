@@ -23,5 +23,11 @@ class RefreshSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
 
-class ResendEmailVerificationOtpSerializer(serializers.Serializer):
+class SendOtpSerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+
+class SetNewPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.IntegerField()
+    password = serializers.CharField(validators=[validate_password])

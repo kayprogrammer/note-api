@@ -5,7 +5,8 @@ from drf_spectacular.utils import extend_schema
 from .serializers import (
     RegisterSerializer,
     VerifyEmailSerializer,
-    ResendEmailVerificationOtpSerializer,
+    SendOtpSerializer,
+    SetNewPasswordSerializer,
     LoginSerializer,
     RefreshSerializer,
 )
@@ -26,7 +27,7 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = User.objects.create(**serializer.validated_data)
+        user = User.objects.create_user(**serializer.validated_data)
         Util.send_activation_otp(user)
         return CustomSuccessResponse({"message": "Registration Successful"}, status=201)
 
@@ -140,11 +141,11 @@ class RefreshView(APIView):
 
 
 class ResendEmailVerificationOtpView(APIView):
-    serializer_class = ResendEmailVerificationOtpSerializer
+    serializer_class = SendOtpSerializer
 
     @extend_schema(
         summary="Resend verification otp",
-        request=ResendEmailVerificationOtpSerializer,
+        request=SendOtpSerializer,
         responses=ResponseSerializer,
     )
     def post(self, request):
@@ -153,10 +154,66 @@ class ResendEmailVerificationOtpView(APIView):
         email = serializer.data["email"]
         user = User.objects.filter(email=email)
         if not user.exists():
-            return CustomErrorResponse({"message": "Invalid email!"}, status=404)
+            return CustomErrorResponse({"message": "Incorrect email!"}, status=404)
         if user[0].is_email_verified == True:
             return CustomSuccessResponse(
                 {"message": "Email already verified. Proceed to login!"}
             )
         Util.send_activation_otp(user[0])
         return CustomSuccessResponse({"message": "New otp sent!"})
+
+
+class SendPasswordResetOtpView(APIView):
+    serializer_class = SendOtpSerializer
+
+    @extend_schema(
+        summary="Send Password Reset Otp",
+        request=SendOtpSerializer,
+        responses=ResponseSerializer,
+    )
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.data["email"]
+        user = User.objects.filter(email=email)
+        if not user.exists():
+            return CustomErrorResponse({"message": "Incorrect email!"}, status=404)
+        Util.send_password_change_otp(user[0])
+        return CustomSuccessResponse({"message": "Otp sent!"})
+
+
+class SetNewPasswordView(APIView):
+    serializer_class = SetNewPasswordSerializer
+
+    @extend_schema(
+        summary="Send Password Reset Otp",
+        request=SetNewPasswordSerializer,
+        responses=ResponseSerializer,
+    )
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.data["email"]
+        otp = serializer.data["otp"]
+        password = serializer.data["password"]
+
+        # Validate user
+        user = User.objects.filter(email=email)
+        if not user.exists():
+            return CustomErrorResponse({"message": "Incorrect email!"}, status=404)
+        user = user.get()
+
+        # Validate Otp
+        otp = Otp.objects.filter(user=user, code=otp)
+        if not otp.exists():
+            return CustomErrorResponse({"message": "Incorrect Otp"})
+        otp = otp.get()
+
+        if otp.check_otp_expiration() == True:
+            return CustomErrorResponse({"message": "Expired otp"})
+
+        # Set password
+        user.set_password(password)
+        user.save()
+        Util.password_reset_confirmation(user)
+        return CustomSuccessResponse({"message": "Password reset success!"})

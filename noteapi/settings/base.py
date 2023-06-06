@@ -22,7 +22,7 @@ DEBUG = config("DEBUG")
 ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(" ")
 
 REST_FRAMEWORK = {
-    # "EXCEPTION_HANDLER": "apps.common.custom_methods.custom_exception_handler",
+    "EXCEPTION_HANDLER": "apps.common.exception_handlers.custom_exception_handler",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
@@ -79,7 +79,7 @@ CORS_ALLOW_HEADERS = (
     "content-disposition",
 )
 
-CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = ("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
 
@@ -207,7 +207,7 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")
 SITE_NAME = "NOTE API"
 
-SETTINGS = config("SETTINGS")
+SETTINGS = config("SETTINGS")  # development or production
 
 
 logger = logging.getLogger(__name__)
