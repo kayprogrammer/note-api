@@ -63,9 +63,8 @@ AUTH_USER_MODEL = "accounts.User"
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(" ")
-
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(" ")
+# CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(" ")
+# CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(" ")
 
 CORS_ALLOW_HEADERS = (
     "x-requested-with",
@@ -311,6 +310,8 @@ JAZZMIN_SETTINGS = {
     "icons": {
         "accounts.user": "fas fa-user",
         "accounts.Group": "fas fa-users",
+        "notes.Note": "fas fa-book",
+
         "sites.Site": "fas fa-globe",
     },
     # Icons that are used when one is not manually specified

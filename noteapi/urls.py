@@ -20,6 +20,7 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     path("api/v1/accounts/", include("apps.accounts.urls")),
+    path("api/v1/notes/", include("apps.notes.urls")),
     path("__debug__/", include(debug_toolbar.urls)),
 ]
 
