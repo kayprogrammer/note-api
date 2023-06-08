@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 from apps.common.models import BaseModel
 from .managers import CustomUserManager
@@ -44,7 +45,7 @@ class Otp(BaseModel):
     def check_otp_expiration(self):
         now = timezone.now()
         diff = now - self.updated_at
-        if diff.total_seconds() > 900:
+        if diff.total_seconds() > int(settings.EMAIL_OTP_EXPIRE_SECONDS):
             return True
         return False
 

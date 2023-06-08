@@ -41,7 +41,11 @@ class Authentication(BaseAuthentication):
     @staticmethod
     def get_access_token(payload):
         return jwt.encode(
-            {"exp": datetime.now() + timedelta(minutes=5), **payload},
+            {
+                "exp": datetime.utcnow()
+                + timedelta(seconds=int(settings.ACCESS_TOKEN_EXPIRE_SECONDS)),
+                **payload,
+            },
             settings.SECRET_KEY,
             algorithm="HS256",
         )
@@ -50,9 +54,33 @@ class Authentication(BaseAuthentication):
     def get_refresh_token():
         return jwt.encode(
             {
-                "exp": datetime.now() + timedelta(hours=24),
+                "exp": datetime.utcnow()
+                + timedelta(seconds=int(settings.REFRESH_TOKEN_EXPIRE_SECONDS)),
                 "data": Authentication.get_random(10),
             },
             settings.SECRET_KEY,
             algorithm="HS256",
         )
+
+    @staticmethod
+    def decodeJWT(bearer):
+        if not bearer:
+            return None
+
+        token = bearer[7:]
+
+        try:
+            decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        except Exception as e:
+            print(e)
+            return None
+
+        if decoded:
+            try:
+                user = User.objects.get(id=decoded["user_id"])
+                jwt_obj = Jwt.objects.filter(user=user)
+                if not jwt_obj.exists():
+                    return None
+                return user
+            except Exception:
+                return None

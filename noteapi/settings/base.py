@@ -66,6 +66,10 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(" ")
 # CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(" ")
 
+ACCESS_TOKEN_EXPIRE_SECONDS = config("ACCESS_TOKEN_EXPIRE_SECONDS")
+REFRESH_TOKEN_EXPIRE_SECONDS = config("REFRESH_TOKEN_EXPIRE_SECONDS")
+EMAIL_OTP_EXPIRE_SECONDS = config("EMAIL_OTP_EXPIRE_SECONDS")
+
 CORS_ALLOW_HEADERS = (
     "x-requested-with",
     "content-type",
@@ -311,7 +315,6 @@ JAZZMIN_SETTINGS = {
         "accounts.user": "fas fa-user",
         "accounts.Group": "fas fa-users",
         "notes.Note": "fas fa-book",
-
         "sites.Site": "fas fa-globe",
     },
     # Icons that are used when one is not manually specified
