@@ -63,8 +63,8 @@ AUTH_USER_MODEL = "accounts.User"
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(" ")
-# CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(" ")
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(" ")
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(" ")
 
 ACCESS_TOKEN_EXPIRE_SECONDS = config("ACCESS_TOKEN_EXPIRE_SECONDS")
 REFRESH_TOKEN_EXPIRE_SECONDS = config("REFRESH_TOKEN_EXPIRE_SECONDS")
@@ -86,28 +86,27 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = ("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
 
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
-    },
-}
-
 SPECTACULAR_SETTINGS = {
     "TITLE": "NOTE API",
     "APPEND_COMPONENTS": {
         "securitySchemes": {
-            "Bearer": {"type": "apiKey", "in": "header", "name": "Authorization"}
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
         }
     },
     "SECURITY": [
         {
-            "Bearer": [],
+            "bearerAuth": [],
         }
     ],
     "DESCRIPTION": "A Simple Note API",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
+    "AUTHENTICATION_WHITELIST": [],
 }
 
 
@@ -242,8 +241,16 @@ logging.config.dictConfig(
             "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
         },
         "loggers": {
-            "": {"level": "INFO", "handlers": ["console", "file"], "propagate": False},
-            "apps": {"level": "INFO", "handlers": ["console"], "propagate": False},
+            "": {
+                "level": "INFO",
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
+            "apps": {
+                "level": "INFO",
+                "handlers": ["console"],
+                "propagate": False,
+            },
             "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
         },
     }
@@ -280,7 +287,11 @@ JAZZMIN_SETTINGS = {
     # Links to put along the top menu
     "topmenu_links": [
         # Url that gets reversed (Permissions can be added)
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {
+            "name": "Home",
+            "url": "admin:index",
+            "permissions": ["auth.view_user"],
+        },
         # model admin to link to (Permissions checked against model)
         # {"model": "accounts.User"},
         # App with dropdown menu to all its models pages (Permissions checked against models)
